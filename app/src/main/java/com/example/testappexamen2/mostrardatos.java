@@ -22,10 +22,7 @@ public class mostrardatos extends AppCompatActivity {
 
     private ArrayAdapter<Tarea> adaptadorTareaLista;
 
-    private ArrayList<Tarea> ListaTareas, agregarlista;
-
-
-
+    private ArrayList<Tarea> ListaTareas;
 
 
     @Override
@@ -34,61 +31,51 @@ public class mostrardatos extends AppCompatActivity {
         setContentView(R.layout.activity_mostrardatos);
 
         referencia();
-        obteneDatos();
         eventos();
 
+        // recibir arraylist desde primera actividad
+        ListaTareas = (ArrayList<Tarea>) getIntent().getSerializableExtra("Listatareas");
 
+        // modificar adaptador y llena adptador con arraylist de Tarea
         adaptadorTareaLista = new ArrayAdapter<Tarea>(this, android.R.layout.simple_list_item_1, ListaTareas);
         ltvnombres.setAdapter(adaptadorTareaLista);
     }
 
     private void eventos() {
+        // Funcion para Botton Filtrat
         btnFiltrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Obtener Datos en TextInputLayout
                 String dato = tilBuscar.getEditText().getText().toString();
 
+                //Filtrar datos
+                adaptadorTareaLista.getFilter().filter(dato);
+
+                // Actualiza Datos para mostrar en pantalla
+                ltvnombres.setAdapter(adaptadorTareaLista);
             }
         });
+        // funcion para eliminar clase si se mantiene presionado
         ltvnombres.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long l) {
-                ListaTareas.remove(pos);
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //eliminar item
+                ListaTareas.remove(i);
+
+                //Actualizar Datos
                 adaptadorTareaLista.notifyDataSetChanged();
-                return false;
+                return true;
+
             }
+
         });
 
     }
 
-    private void obteneDatos() {
-        ListaTareas = new ArrayList<Tarea>();
 
 
-
-       /* for(int x = 1; x <= 25; ++x){
-            Tarea i = new Tarea();
-            i.setTitulo("Titulo " + x);
-            i.setDescripcion("Descripcion " + x);
-            ListaTareas.add(i);
-        }
-
-        */
-        //agregar esto para prueba de datos
-
-            String titulo = getIntent().getExtras().getString("datoTitulo");
-            String descripcion = getIntent().getExtras().getString("datoDescripcion");
-            Tarea t = new Tarea();
-            t.setTitulo(titulo);
-            t.setDescripcion(descripcion);
-            ListaTareas.add(t);
-
-
-
-
-
-    }
-
+    // conecta diseña y java
     private void referencia() {
 
         ltvnombres = findViewById(R.id.ltvnombres);
@@ -96,6 +83,7 @@ public class mostrardatos extends AppCompatActivity {
         btnFiltrar = findViewById(R.id.btnFiltrar);
 
         ListaTareas = new ArrayList<Tarea>();
+
 
     }
 }

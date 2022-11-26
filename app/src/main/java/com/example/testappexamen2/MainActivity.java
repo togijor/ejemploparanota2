@@ -19,9 +19,8 @@ public class MainActivity extends AppCompatActivity {
 
     private TextInputLayout tilTitulo,tilDescripcion;
     private Button btnIngresar,btnModificar;
-    private ImageButton btnbuscar;
+    private ImageButton btnBuscar;
     private ArrayList<Tarea> ListaTareas;
-    public int c = 0;
 
 
     @Override
@@ -30,50 +29,98 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         refecrencia();
-        evento();
+        poblararray();
+        eventoBotones();
+    }
+    //  Llenna el array con datos aleatorios
+    private void poblararray() {
+        for(int x = 1; x <= 25; ++x){
+            Tarea i = new Tarea();
+            i.setId((int) (Math.random()*100));
+            i.setTitulo("Tareas " + x);
+            i.setDescripcion("Descripcion " + x);
+            ListaTareas.add(i);
+        }
+
+
     }
 
-    private void evento() {
-        btnbuscar.setOnClickListener(new View.OnClickListener() {
+    private void eventoBotones(){
+        // Funcion para Button Buscar
+        btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mostrardatos();
+                //entra a la segunda pantalla
+                actividadMostrardatos();
             }
         });
+
+        //  Funcion para Botton Ingresar
         btnIngresar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int ingreso = (int) (Math.random()*100);
+                // Obtener Datos en Textlayoutinput
                 String titulo = tilTitulo.getEditText().getText().toString();
                 String descripcion = tilDescripcion.getEditText().getText().toString();
-                validacion();
-                Tarea t = new Tarea();
-                t.setId((int) (Math.random()*100));
-                t.setTitulo(titulo);
-                t.setDescripcion(descripcion);
-                ListaTareas.add(t);
 
+                // valida usuario debe ingresar titulo y descripcion
+                validacion();
+
+
+
+                // Agregar un nuevo objeto de clase Tarea
+                Tarea i = new Tarea();
+                i.setTitulo(titulo);
+                i.setDescripcion(descripcion);
+                ListaTareas.add(i);
 
 
             }
         });
+
+        // Funcion para Botton Modificar
         btnModificar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Obtener datos en Textlayoutinput
                 String titulo = tilTitulo.getEditText().getText().toString();
                 String descripcion = tilDescripcion.getEditText().getText().toString();
+
+                // valida si hay datos en titulo y descripcion
                 validacion();
-                Toast.makeText(MainActivity.this, "Tarea no existe", Toast.LENGTH_SHORT).show();
+
+
+                boolean encontrado = false;
+                // Leer todos Arraylist de Tarea
+                for (int x = 0; x < ListaTareas.size(); x++ ){
+                    Tarea i = ListaTareas.get(x);
+                    // si encuentra titulo que usario ingresa
+                    if (i.getTitulo().equals(titulo)){
+                        encontrado = true;
+
+                        // Modificar descripcion
+                        i.setDescripcion(descripcion);
+
+                        // salir leer Arraylist
+                        break;
+                    }
+                }
+                // Si no encuentra el mismo Titulo manda Toast mensaje "Tarea no existe"
+                if (!encontrado){
+                    Toast.makeText(MainActivity.this, "Tarea no existe", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
     }
-
-
+    // valida usuario debe ingresar titulo y descripcion
     private void validacion() {
+        // Obtener datos en textlayout
         String titulo = tilTitulo.getEditText().getText().toString();
         String descripcion = tilDescripcion.getEditText().getText().toString();
 
+        // si hay un campo vacio envia un error
         if (titulo.isEmpty() || descripcion.isEmpty()){
             if(titulo.isEmpty())
                 tilTitulo.setError("Debes completar este campo");
@@ -81,25 +128,29 @@ public class MainActivity extends AppCompatActivity {
                 tilDescripcion.setError("Debes completar este campo");
         }
     }
-
-    private void mostrardatos() {
+    // Funcion para entra a la segunda actividad
+    private void actividadMostrardatos() {
+        // Obtener datos
         String titulo = tilTitulo.getEditText().getText().toString();
         String descripcion = tilDescripcion.getEditText().getText().toString();
 
-        Intent pantallaMostrar = new Intent(this, mostrardatos.class);
+        //Crear nuevo Intent para desde mainActividad  al segundo actividad
+        Intent segundoPantalla = new Intent(getBaseContext(), mostrardatos.class);
 
-        pantallaMostrar.putExtra("datoTitulo", titulo);
-        pantallaMostrar.putExtra("datoDescripcion", descripcion);
+        // envia Arraylist a la segunda actividad
+        segundoPantalla.putExtra("Listatareas", ListaTareas);
 
-        startActivity(pantallaMostrar);
+        // abrir segunda actividad
+        startActivity(segundoPantalla);
     }
 
+    // refencia los widget
     private void refecrencia() {
         tilTitulo = findViewById(R.id.tilTitulo);
         tilDescripcion = findViewById(R.id.tilDescripcion);
         btnIngresar = findViewById(R.id.btnIngresar);
         btnModificar = findViewById(R.id.btnModificar);
-        btnbuscar = findViewById(R.id.ibbotton);
+        btnBuscar = findViewById(R.id.ibbotton);
 
         ListaTareas = new ArrayList<Tarea>();
 
