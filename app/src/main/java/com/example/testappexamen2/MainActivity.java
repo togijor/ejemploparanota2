@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     }
     //  Llenna el array con datos aleatorios
     private void poblararray() {
-        for(int x = 1; x <= 25; ++x){
+        for(int x = 1; x <= 10; ++x){
             Tarea i = new Tarea();
             i.setId((int) (Math.random()*100));
             i.setTitulo("Tareas " + x);
